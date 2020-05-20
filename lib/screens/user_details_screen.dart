@@ -171,18 +171,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               SizedBox(height: 25.0),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                  Widget>[
-                Text(
-                  userName,
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                if (donor == 'No')
-                  FlatButton(
-                    child: Text('Be a Donor', style: TextStyle(fontSize: 10.0)),
-                    onPressed: beADonor,
-                  )
-              ]),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      userName,
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: donor == 'No' ? 3.0 : 10.0,
+                    ),
+                    donor == 'No'
+                        ? FlatButton(
+                            child: Text('Be a Donor',
+                                style: TextStyle(fontSize: 10.0)),
+                            onPressed: beADonor,
+                          )
+                        : Container(
+                            width: 20.0,
+                            height: 20.0,
+                            child: Image.asset(
+                              'assets/images/blood_drop.png',
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                  ]),
               SizedBox(height: 4.0),
               Text(
                 userBio,
@@ -255,8 +269,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              // buildImages(),
-              // buildInfoDetail(),
+              buildImages(),
+              buildInfoDetail(),
               // buildImages(),
               // buildInfoDetail(),
             ],

@@ -27,8 +27,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
     SearchService().searchByName(value).then((QuerySnapshot docs) {
       int i;
       for (i = 0; i < docs.documents.length; ++i) {
-        if (docs.documents[i].data['isDonor'].trim().toUpperCase ==
-            'Yes'.trim().toUpperCase())
+        if (docs.documents[i].data['isDonor'] == 'Yes')
           queryResultSet.add(docs.documents[i].data);
       }
     });
@@ -69,10 +68,11 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Text(
-                    'Blood Group : ',
-                    style: TextStyle(fontSize: 15.0),
-                  ),
+                  Text('BLOOD GROUP : ',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w700,
+                      )),
                   DropdownButton<String>(
                     iconEnabledColor: Colors.indigo,
                     value: _bloodGroup,
@@ -135,19 +135,23 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
               height: 10.0,
             ),
             queryResultSet.length == 0
-                ? builderSet.length == 0
-                    ? _buildCenterText('OOPS...No Donors for $_bloodGroup')
-                    : _buildCenterText('Search to see the Donors')
+                ? _buildCenterText('Search to see the Donors')
                 : builderSet.length == 0
                     ? _buildCenterText('Couldn\'t reach servers...Try Again')
                     : Column(
                         children: <Widget>[
                           ListTile(
                             title: Text(
-                                'Total Donors for $_bloodGroup : ${builderSet.length}'),
+                              'TOTAL DONORS :  ${builderSet.length}',
+                              style: TextStyle(
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Text(_bloodGroup),
                           ),
                           Container(
-                            height: mediaQuery.height * 0.7,
+                            height: mediaQuery.height * 0.68,
                             width: double.infinity,
                             child: ListView.separated(
                               separatorBuilder: (ctx, index) {

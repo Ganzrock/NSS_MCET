@@ -48,7 +48,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: Container(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(8.0),
           child: Image.asset(
             'assets/images/nn.png',
             fit: BoxFit.cover,
