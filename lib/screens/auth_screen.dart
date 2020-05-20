@@ -16,6 +16,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
   var _isLoading = false;
+  int noOfPost = 0;
 
   void _submitAuthForm(
     String email,
@@ -23,6 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
     String username,
     String rollNumber,
     String bloodGroup,
+    bool isDonor,
     File image,
     bool isLogin,
     BuildContext ctx,
@@ -62,6 +64,9 @@ class _AuthScreenState extends State<AuthScreen> {
           'image_url': url,
           'rollnumber': rollNumber,
           'bloodGroup': bloodGroup,
+          'noOfPost': noOfPost,
+          'isDonor': isDonor ? 'Yes' : 'No',
+          'bio': 'Add Bio',
         });
       }
     } on PlatformException catch (err) {

@@ -17,6 +17,7 @@ class AuthForm extends StatefulWidget {
     String userName,
     String rollNumber,
     String bloodGroup,
+    bool isDonor,
     File image,
     bool isLogin,
     BuildContext ctx,
@@ -35,6 +36,7 @@ class _AuthFormState extends State<AuthForm> {
   var _repassword = '';
   var _rollNumber = '';
   var _bloodGroup = 'O+';
+  var _isDonor = false;
   File _userImageFile;
 
   void _pickedImage(File image) {
@@ -84,6 +86,7 @@ class _AuthFormState extends State<AuthForm> {
         _userName.trim(),
         _rollNumber.trim(),
         _bloodGroup,
+        _isDonor,
         _userImageFile,
         _isLogin,
         context,
@@ -109,10 +112,10 @@ class _AuthFormState extends State<AuthForm> {
           icon: Icon(Icons.arrow_downward),
           iconSize: 24,
           elevation: 16,
-          style: TextStyle(color: Colors.deepPurple),
+          style: TextStyle(color: Colors.indigo),
           underline: Container(
             height: 2,
-            color: Colors.deepPurpleAccent,
+            color: Colors.indigo,
           ),
           onChanged: (String newValue) {
             setState(() {
@@ -315,7 +318,7 @@ class _AuthFormState extends State<AuthForm> {
                             ),
                           ),
                         ),
-                      if (!_isLogin)
+                      if (!_isLogin && !widget.isLoading)
                         Container(
                             height: 50.0,
                             child: Material(

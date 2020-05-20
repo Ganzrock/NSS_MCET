@@ -36,9 +36,7 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, userSnapshot) {
-          if (userSnapshot.connectionState == ConnectionState.waiting) {
-            SplashScreen();
-          } else if (userSnapshot.hasData) {
+          if (userSnapshot.hasData) {
             return HomeScreen();
           }
           return AuthScreen();
@@ -51,7 +49,8 @@ class MyApp extends StatelessWidget {
         EmergencyScreen.routeName: (_) => EmergencyScreen(),
         NotificationScreen.routeName: (_) => NotificationScreen(),
         ChatScreen.routeName: (_) => ChatScreen(),
-        ProfilePage.routeName: (_) => ProfilePage(),
+        ProfilePage.routeName: (_) => ProfilePage(true),
+        ProfilePage.routeName2: (_) => ProfilePage(false),
       },
     );
   }

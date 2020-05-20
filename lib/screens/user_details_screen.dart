@@ -1,15 +1,93 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/user_details.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = '/profile';
+  static const routeName2 = '/profile_view';
+
+  final bool isMe;
+
+  ProfilePage(this.isMe);
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   var userResults;
+  var uName = '';
+  var userImageUrl = 'https://dummyimage.com/20/fff/000';
+  var uBio = '';
+  var uArticleCount = 0;
+  var donor = '';
+  var bloodGroup = '';
+
+  String get userImage {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        userImageUrl = doc['image_url'];
+      });
+    });
+    return userImageUrl;
+  }
+
+  String get userName {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        uName = doc['username'];
+      });
+    });
+    return uName;
+  }
+
+  String get userBio {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        uBio = doc['bio'];
+      });
+    });
+    return uBio;
+  }
+
+  String get userArticlesCount {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        uArticleCount = doc['noOfPost'];
+      });
+    });
+    return uArticleCount.toString();
+  }
+
+  String get userIsDonor {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        donor = doc['isDonor'];
+      });
+    });
+    return donor;
+  }
+
+  String get userBloodGroup {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        bloodGroup = doc['bloodGroup'];
+      });
+    });
+    return bloodGroup;
+  }
+
+  void beADonor() async {
+    final user = await FirebaseAuth.instance.currentUser();
+    Firestore.instance
+        .collection('users')
+        .document(user.uid)
+        .updateData({'isDonor': 'Yes'});
+    setState(() {
+      donor = 'Yes';
+    });
+  }
 
   // getUser() async {
   //   final user = await FirebaseAuth.instance.currentUser();
@@ -32,10 +110,48 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
-          )
+          widget.isMe
+              ? DropdownButton(
+                  underline: Container(),
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Colors.black87,
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.edit),
+                            SizedBox(width: 8),
+                            Text('Edit'),
+                          ],
+                        ),
+                      ),
+                      value: 'edit',
+                    ),
+                    DropdownMenuItem(
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.exit_to_app),
+                            SizedBox(width: 8),
+                            Text('Logout'),
+                          ],
+                        ),
+                      ),
+                      value: 'logout',
+                    ),
+                  ],
+                  onChanged: (itemIdentifier) {
+                    if (itemIdentifier == 'logout') {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (route) => false);
+                    }
+                  },
+                )
+              : Container()
         ],
       ),
       body: ListView(
@@ -50,67 +166,76 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(62.5),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/images/nn.png'),
+                    image: NetworkImage(userImage),
                   ),
                 ),
               ),
               SizedBox(height: 25.0),
-              Text(
-                'Mark Stewart',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                  Widget>[
+                Text(
+                  userName,
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
+                if (donor == 'No')
+                  FlatButton(
+                    child: Text('Be a Donor', style: TextStyle(fontSize: 10.0)),
+                    onPressed: beADonor,
+                  )
+              ]),
               SizedBox(height: 4.0),
               Text(
-                'San Jose, CA',
+                userBio,
                 style: TextStyle(color: Colors.grey),
               ),
               Padding(
                 padding: EdgeInsets.all(30.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '24K',
+                          userArticlesCount,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5.0),
                         Text(
-                          'FOLLOWERS',
+                          'ARTICLES',
                           style: TextStyle(color: Colors.grey),
                         )
                       ],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '31',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          'TRIPS',
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          '21',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text(
-                          'BUCKET LIST',
-                          style: TextStyle(color: Colors.grey),
-                        )
-                      ],
-                    )
+                    userIsDonor == 'No'
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                userIsDonor,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 5.0),
+                              Text(
+                                'BLOOD DONOR',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                userBloodGroup,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 5.0),
+                              Text(
+                                'BLOOD GROUP',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ],
+                          ),
                   ],
                 ),
               ),
@@ -130,10 +255,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
               ),
-              buildImages(),
-              buildInfoDetail(),
-              buildImages(),
-              buildInfoDetail(),
+              // buildImages(),
+              // buildInfoDetail(),
+              // buildImages(),
+              // buildInfoDetail(),
             ],
           )
         ],

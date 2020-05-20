@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/widgets/home/gallery_list.dart';
+import '../widgets/home/gallery_list.dart';
 
 import '../screens/blood_request_screen.dart';
 import '../screens/user_details_screen.dart';
@@ -19,6 +19,8 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
   var uName = '';
   var _showNameCard = true;
 
+  var userImageUrl = 'https://dummyimage.com/20/fff/000';
+
   String get userName {
     User().userData.then((DocumentSnapshot doc) {
       setState(() {
@@ -28,13 +30,22 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
     return uName;
   }
 
+  String get userImage {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        userImageUrl = doc['image_url'];
+      });
+    });
+    return userImageUrl;
+  }
+
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
-        backgroundColor: Colors.indigoAccent[200],
+        backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: Container(
           padding: EdgeInsets.all(10.0),
@@ -47,7 +58,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
           'NSS MCET',
           textAlign: TextAlign.left,
           style: TextStyle(
-            color: Colors.white70,
+            color: Colors.indigo[900],
             fontFamily: '',
             fontWeight: FontWeight.w900,
             fontSize: 22.0,
@@ -60,15 +71,21 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
               Navigator.of(context).pushNamed(NotificationScreen.routeName);
             },
             iconSize: 20.0,
-            color: Colors.white54,
+            color: Colors.black54,
           ),
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
+          GestureDetector(
+            child: Container(
+              height: 18.0,
+              child: CircleAvatar(
+                radius: 20.0,
+                backgroundImage: (userImageUrl == null)
+                    ? AssetImage('assets/images/plant.png')
+                    : NetworkImage(userImage),
+              ),
+            ),
+            onTap: () {
               Navigator.of(context).pushNamed(ProfilePage.routeName);
             },
-            iconSize: 20.0,
-            color: Colors.white54,
           ),
         ],
       ),

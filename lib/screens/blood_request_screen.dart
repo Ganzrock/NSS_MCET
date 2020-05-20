@@ -27,7 +27,9 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
     SearchService().searchByName(value).then((QuerySnapshot docs) {
       int i;
       for (i = 0; i < docs.documents.length; ++i) {
-        queryResultSet.add(docs.documents[i].data);
+        if (docs.documents[i].data['isDonor'].trim().toUpperCase ==
+            'Yes'.trim().toUpperCase())
+          queryResultSet.add(docs.documents[i].data);
       }
     });
   }
@@ -37,7 +39,14 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
     final mediaQuery = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigoAccent[200],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.black,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        backgroundColor: Colors.transparent,
         elevation: 0.0,
         title: Text(
           'Blood Donors',
@@ -49,22 +58,6 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
             fontSize: 20.0,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.notifications_none),
-            onPressed: () {},
-            iconSize: 20.0,
-            color: Colors.white54,
-          ),
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.of(context).pushNamed(ProfilePage.routeName);
-            },
-            iconSize: 20.0,
-            color: Colors.white54,
-          ),
-        ],
       ),
       body: Container(
         margin: EdgeInsets.only(top: 8.0),
@@ -96,6 +89,8 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                         _bloodGroup = newValue;
 
                         initiateSearch(_bloodGroup.trim().toUpperCase());
+
+                        builderSet = queryResultSet;
                       });
                     },
                     items: <String>[
@@ -117,7 +112,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                   SizedBox(
                     width: 9.0,
                   ),
-                  FlatButton(
+                  RaisedButton(
                     visualDensity: VisualDensity.standard,
                     onPressed: () async {
                       setState(() {
@@ -131,7 +126,6 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                     },
                     child: Text(
                       'Search',
-                      style: TextStyle(color: buttonColor),
                     ),
                   ),
                 ],
@@ -141,32 +135,42 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
               height: 10.0,
             ),
             queryResultSet.length == 0
-                ? _buildCenterText('Serch to see the Donors')
+                ? builderSet.length == 0
+                    ? _buildCenterText('OOPS...No Donors for $_bloodGroup')
+                    : _buildCenterText('Search to see the Donors')
                 : builderSet.length == 0
                     ? _buildCenterText('Couldn\'t reach servers...Try Again')
-                    : Container(
-                        height: mediaQuery.height * 0.7,
-                        width: double.infinity,
-                        child: ListView.separated(
-                          separatorBuilder: (ctx, index) {
-                            return Divider();
-                          },
-                          itemBuilder: (ctx, index) {
-                            var item = builderSet[index];
-                            return ListTile(
-                              leading: Icon(
-                                Icons.perm_identity,
-                              ),
-                              title: Text(
-                                item['username'].toString(),
-                              ),
-                              trailing: Text(
-                                item['bloodGroup'].toString(),
-                              ),
-                            );
-                          },
-                          itemCount: queryResultSet.length,
-                        ),
+                    : Column(
+                        children: <Widget>[
+                          ListTile(
+                            title: Text(
+                                'Total Donors for $_bloodGroup : ${builderSet.length}'),
+                          ),
+                          Container(
+                            height: mediaQuery.height * 0.7,
+                            width: double.infinity,
+                            child: ListView.separated(
+                              separatorBuilder: (ctx, index) {
+                                return Divider();
+                              },
+                              itemBuilder: (ctx, index) {
+                                var item = builderSet[index];
+                                return ListTile(
+                                  leading: Icon(
+                                    Icons.perm_identity,
+                                  ),
+                                  title: Text(
+                                    item['username'].toString(),
+                                  ),
+                                  trailing: Text(
+                                    item['bloodGroup'].toString(),
+                                  ),
+                                );
+                              },
+                              itemCount: queryResultSet.length,
+                            ),
+                          ),
+                        ],
                       ),
           ],
         ),
@@ -184,6 +188,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       child: Center(
+        heightFactor: MediaQuery.of(context).size.height,
         child: Text(
           s,
           style: TextStyle(
