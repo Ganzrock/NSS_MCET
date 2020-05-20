@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'page': ArticleScreen(),
         'title': 'Articles',
       },
-      {'page': BookmarkScreen(), 'title': 'Bookmarks'},
+      {'page': EmergencyScreen(), 'title': 'Bookmarks'},
       {
         'page': ChatScreen(),
         'title': 'Chat',
@@ -72,9 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.description),
               title: Text('Post')),
           BottomNavigationBarItem(
-              backgroundColor: Colors.white,
-              icon: Icon(Icons.bookmark),
-              title: Text('Bookmark')),
+            backgroundColor: Colors.white,
+            icon: Icon(Icons.local_hospital),
+            title: Text('Emergency'),
+          ),
           BottomNavigationBarItem(
               backgroundColor: Colors.white,
               icon: Icon(Icons.people),

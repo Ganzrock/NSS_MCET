@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/widgets/home/gallery_list.dart';
 
@@ -8,6 +7,8 @@ import '../screens/user_details_screen.dart';
 
 import '../widgets/home/contribution_list.dart';
 import '../widgets/home/name_card.dart';
+import 'notifications_screen.dart';
+import '../providers/user_details.dart';
 
 class NssHomeScreen extends StatefulWidget {
   @override
@@ -15,13 +16,20 @@ class NssHomeScreen extends StatefulWidget {
 }
 
 class _NssHomeScreenState extends State<NssHomeScreen> {
-  var uName;
+  var uName = '';
   var _showNameCard = true;
-  var userResults;
-  var _onHover = false;
+
+  String get userName {
+    User().userData.then((DocumentSnapshot doc) {
+      setState(() {
+        uName = doc['username'];
+      });
+    });
+    return uName;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var deviceHeight = MediaQuery.of(context).size.height;
     var deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white38,
@@ -39,7 +47,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
           'NSS MCET',
           textAlign: TextAlign.left,
           style: TextStyle(
-            color: Colors.black87,
+            color: Colors.white70,
             fontFamily: '',
             fontWeight: FontWeight.w900,
             fontSize: 22.0,
@@ -48,7 +56,9 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_none),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(NotificationScreen.routeName);
+            },
             iconSize: 20.0,
             color: Colors.white54,
           ),
@@ -62,14 +72,15 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
           ),
         ],
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: <Widget>[
             // CustomAppBar(),
             if (_showNameCard)
               Stack(
                 children: <Widget>[
-                  NameCard('Gnana Ganesh'),
+                  NameCard(userName),
                   Positioned(
                     right: deviceWidth * 0.1,
                     child: IconButton(
@@ -86,20 +97,23 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
               )
             else
               Container(),
-            Positioned(
-              top: 50,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSubtitle('Contributions'),
-                    Contributions(),
-                    _buildSubtitle('Gallery'),
-                    GalleryListView(),
-                  ],
-                ),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSubtitle('Contributions'),
+                Contributions(),
+                _buildSubtitle('Gallery'),
+                GalleryListView('Republis Day'),
+                GalleryListView('APJ Memeorial'),
+                GalleryListView('Independence Day'),
+                GalleryListView('Eye Camp'),
+                GalleryListView('Rally'),
+                GalleryListView('Marathon'),
+                GalleryListView('Special Camp'),
+                GalleryListView('Swachh Bharat'),
+                GalleryListView('Agastya Workshop'),
+                GalleryListView('Unnat Bharat'),
+              ],
             ),
           ],
         ),
@@ -108,7 +122,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
         width: MediaQuery.of(context).size.width * 0.1,
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).pushNamed('BloodRequestScreen.routeName');
+            Navigator.of(context).pushNamed(BloodRequestScreen.routeName);
           },
           child: Image.asset(
             'assets/images/blood_drop2.png',

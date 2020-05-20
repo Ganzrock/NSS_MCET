@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_complete_guide/screens/splash_screen.dart';
 
 import 'screens/chat_screen.dart';
 import 'screens/auth_screen.dart';
@@ -35,7 +36,9 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (ctx, userSnapshot) {
-          if (userSnapshot.hasData) {
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
+            SplashScreen();
+          } else if (userSnapshot.hasData) {
             return HomeScreen();
           }
           return AuthScreen();
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
         NewArticle.routeName: (_) => NewArticle(),
         ArticleScreen.routeName: (_) => ArticleScreen(),
         BloodRequestScreen.routeName: (_) => BloodRequestScreen(),
-        BookmarkScreen.routeName: (_) => BookmarkScreen(),
+        EmergencyScreen.routeName: (_) => EmergencyScreen(),
         NotificationScreen.routeName: (_) => NotificationScreen(),
         ChatScreen.routeName: (_) => ChatScreen(),
         ProfilePage.routeName: (_) => ProfilePage(),

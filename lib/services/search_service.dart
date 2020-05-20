@@ -4,7 +4,7 @@ class SearchService {
   searchByName(String searchField) {
     return Firestore.instance
         .collection('users')
-        .where('bloodGroup', isEqualTo: searchField..toUpperCase())
+        .where('bloodGroup', isEqualTo: searchField)
         .getDocuments();
   }
 }
