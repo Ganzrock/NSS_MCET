@@ -6,8 +6,6 @@ import 'package:flutter_complete_guide/widgets/home/gallery_list.dart';
 import '../screens/blood_request_screen.dart';
 import '../screens/user_details_screen.dart';
 
-import '../widgets/custom_appbar.dart';
-import '../widgets/home/achievement_card.dart';
 import '../widgets/home/contribution_list.dart';
 import '../widgets/home/name_card.dart';
 
@@ -65,44 +63,45 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: <Widget>[
-              // CustomAppBar(),
-              if (_showNameCard)
-                Stack(
-                  children: <Widget>[
-                    NameCard('Gnana Ganesh'),
-                    Positioned(
-                      right: deviceWidth * 0.1,
-                      child: IconButton(
-                          color: Colors.white54,
-                          iconSize: 20.0,
-                          icon: Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              _showNameCard = false;
-                            });
-                          }),
-                    )
-                  ],
-                )
-              else
-                Container(),
-              Positioned(
-                top: 50,
+        child: Column(
+          children: <Widget>[
+            // CustomAppBar(),
+            if (_showNameCard)
+              Stack(
+                children: <Widget>[
+                  NameCard('Gnana Ganesh'),
+                  Positioned(
+                    right: deviceWidth * 0.1,
+                    child: IconButton(
+                        color: Colors.white54,
+                        iconSize: 20.0,
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          setState(() {
+                            _showNameCard = false;
+                          });
+                        }),
+                  )
+                ],
+              )
+            else
+              Container(),
+            Positioned(
+              top: 50,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildSubtitle('Contributions'),
                     Contributions(),
                     _buildSubtitle('Gallery'),
+                    GalleryListView(),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: Container(
@@ -112,7 +111,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
             Navigator.of(context).pushNamed('BloodRequestScreen.routeName');
           },
           child: Image.asset(
-            'assets/images/blood_drop.png',
+            'assets/images/blood_drop2.png',
             fit: BoxFit.cover,
           ),
         ),
@@ -134,7 +133,7 @@ class _NssHomeScreenState extends State<NssHomeScreen> {
             ),
           ),
           Text(
-            'Swipe for more >>',
+            'Swipe for more',
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 12,

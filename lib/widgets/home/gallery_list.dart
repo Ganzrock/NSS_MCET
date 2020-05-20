@@ -5,26 +5,35 @@ class GalleryListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
+      scrollDirection: Axis.horizontal,
+      child: Row(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              GalleryListItem(),
-              GalleryListItem(),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              GalleryListItem(),
-              GalleryListItem(),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              GalleryListItem(),
-              GalleryListItem(),
-            ],
+          _buildSubtitle('Republic Day'),
+          GalleryListItem('assets/images/rally.png'),
+          GalleryListItem('assets/images/plant.png'),
+          GalleryListItem('assets/images/rally.png'),
+          GalleryListItem('assets/images/plant.png'),
+          GalleryListItem('assets/images/rally.png'),
+          GalleryListItem('assets/images/plant.png'),
+          GalleryListItem('assets/images/rally.png'),
+          GalleryListItem('assets/images/plant.png'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubtitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 14,
+            ),
           ),
         ],
       ),

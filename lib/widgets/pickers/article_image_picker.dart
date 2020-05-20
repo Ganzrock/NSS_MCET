@@ -18,8 +18,8 @@ class _UserImagePickerState extends State<ArticleImagePicker> {
   void _pickImage() async {
     final pickedImageFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50,
-      maxWidth: 150,
+      imageQuality: 70,
+      maxWidth: 300,
     );
     setState(() {
       _pickedImage = pickedImageFile;
@@ -38,27 +38,53 @@ class _UserImagePickerState extends State<ArticleImagePicker> {
           color: Colors.grey[100],
           elevation: 10,
           child: new Container(
-            padding: new EdgeInsets.all(15.0),
+            padding: _pickedImage != null
+                ? EdgeInsets.all(5.0)
+                : EdgeInsets.all(15.0),
             child: new Column(
               children: <Widget>[
-                new IconButton(
-                  icon: _pickedImage != null
-                      ? FileImage(_pickedImage)
-                      : Icon(Icons.camera_alt),
-                  iconSize: 50.0,
-                  color: Colors.indigo[900],
-                  onPressed: () {},
+                new Container(
+                  child: _pickedImage != null
+                      ? Image.file(
+                          _pickedImage,
+                          fit: BoxFit.cover,
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.camera_alt),
+                          color: Colors.indigo[900],
+                          onPressed: _pickImage,
+                        ),
+                  width: _pickedImage != null
+                      ? MediaQuery.of(context).size.width * 0.8
+                      : 50.0,
+                  height: _pickedImage != null
+                      ? MediaQuery.of(context).size.width * 0.5
+                      : 50.0,
                 ),
               ],
             ),
           ),
         ),
-        FlatButton.icon(
-          textColor: Theme.of(context).primaryColor,
-          onPressed: _pickImage,
-          icon: Icon(Icons.image),
-          label: Text('Add Image'),
-        ),
+        _pickedImage == null
+            ? Container()
+            : ButtonBar(
+                children: <Widget>[
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: _pickImage,
+                    child: Text('Change'),
+                  ),
+                  RaisedButton(
+                    child: Text('Cancel'),
+                    color: Colors.red[600],
+                    onPressed: () {
+                      setState(() {
+                        _pickedImage = null;
+                      });
+                    },
+                  )
+                ],
+              )
       ],
     );
   }
