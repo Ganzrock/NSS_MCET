@@ -1,15 +1,28 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:nice_button/NiceButton.dart';
 
-class NewArticle extends StatelessWidget {
+import '../widgets/pickers/article_image_picker.dart';
+
+class NewArticle extends StatefulWidget {
   static const routeName = '/new-article';
+
+  @override
+  _NewArticleState createState() => _NewArticleState();
+}
+
+class _NewArticleState extends State<NewArticle> {
+  File _articleImageFile;
+
+  void _pickedImage(File image) {
+    _articleImageFile = image;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('New Article'),
-      ),
+      backgroundColor: Colors.white70,
       body: Container(
           padding: const EdgeInsets.all(30.0),
           color: Colors.white,
@@ -25,26 +38,7 @@ class NewArticle extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               new Padding(padding: EdgeInsets.only(top: 40.0)),
-              new Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                color: Colors.grey[100],
-                elevation: 10,
-                child: new Container(
-                  padding: new EdgeInsets.all(15.0),
-                  child: new Column(
-                    children: <Widget>[
-                      new IconButton(
-                        icon: Icon(Icons.camera_alt),
-                        iconSize: 50.0,
-                        color: Colors.indigo[900],
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              ArticleImagePicker(_pickedImage),
               SizedBox(height: 30),
               new TextFormField(
                 decoration: new InputDecoration(
