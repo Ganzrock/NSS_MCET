@@ -9,7 +9,6 @@ import 'screens/blood_request_screen.dart';
 import 'screens/new_article.dart';
 import 'screens/bookmarks_screen.dart';
 import 'screens/notifications_screen.dart';
-import 'screens/nss_home_screen.dart';
 import 'screens/user_details_screen.dart';
 
 void main() => runApp(MyApp());
