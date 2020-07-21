@@ -43,7 +43,7 @@ class CustomAppBar extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.person),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(ProfilePage.routeName);
+                  // Navigator.of(context).pushNamed(ProfilePage.routeName);
                 },
                 iconSize: 20.0,
               ),

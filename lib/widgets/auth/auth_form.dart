@@ -251,21 +251,21 @@ class _AuthFormState extends State<AuthForm> {
                           _userPassword = value;
                         },
                       ),
-                      if (_isLogin)
-                        Container(
-                          alignment: Alignment(1.0, 0.0),
-                          padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                          child: InkWell(
-                            child: Text(
-                              'Forget Password',
-                              style: TextStyle(
-                                  color: Colors.indigo,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Montserrat',
-                                  decoration: TextDecoration.underline),
-                            ),
-                          ),
-                        ),
+                      // if (_isLogin)
+                      //   Container(
+                      //     alignment: Alignment(1.0, 0.0),
+                      //     padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                      //     child: InkWell(
+                      //       child: Text(
+                      //         'Forget Password',
+                      //         style: TextStyle(
+                      //             color: Colors.indigo,
+                      //             fontWeight: FontWeight.bold,
+                      //             fontFamily: 'Montserrat',
+                      //             decoration: TextDecoration.underline),
+                      //       ),
+                      //     ),
+                      //   ),
                       if (!_isLogin)
                         TextFormField(
                           key: ValueKey('repassword'),
@@ -295,15 +295,16 @@ class _AuthFormState extends State<AuthForm> {
                           backgroundColor: Colors.indigo,
                         ),
                       if (!widget.isLoading && _isLogin)
-                        Container(
-                          height: 50.0,
-                          child: Material(
-                            borderRadius: BorderRadius.circular(20.0),
-                            shadowColor: Colors.indigoAccent,
-                            color: Colors.indigo,
-                            elevation: 7.0,
-                            child: GestureDetector(
-                              onTap: _trySubmit,
+                        InkWell(
+                          onTap: _trySubmit,
+                          splashColor: Colors.indigo,
+                          child: Container(
+                            height: 50.0,
+                            child: Material(
+                              borderRadius: BorderRadius.circular(20.0),
+                              shadowColor: Colors.indigoAccent,
+                              color: Colors.indigo,
+                              elevation: 7.0,
                               child: Center(
                                 child: Text(
                                   'LOGIN',
@@ -326,7 +327,7 @@ class _AuthFormState extends State<AuthForm> {
                               shadowColor: Colors.indigoAccent,
                               color: Colors.indigo,
                               elevation: 7.0,
-                              child: GestureDetector(
+                              child: InkWell(
                                 onTap: _trySubmit,
                                 child: Center(
                                   child: Text(
@@ -340,39 +341,6 @@ class _AuthFormState extends State<AuthForm> {
                               ),
                             )),
                       SizedBox(height: 25.0),
-                      if (_isLogin)
-                        Container(
-                          height: 40.0,
-                          color: Colors.transparent,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.black,
-                                    style: BorderStyle.solid,
-                                    width: 1.0),
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(20.0)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Center(
-                                    child: ImageIcon(AssetImage(
-                                        'assets/images/facebook.png'))),
-                                SizedBox(width: 10.0),
-                                Center(
-                                  child: Text(
-                                    'Login in With facebook',
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: 15.0),
                       if (!_isLogin)
                         Container(
                           height: 40.0,
@@ -444,15 +412,18 @@ class _AuthFormState extends State<AuthForm> {
       children: [
         Container(
           padding: EdgeInsets.fromLTRB(
-              fullWidth / 10, fullHeight / 5, 0.0, fullWidth / 10),
+              fullWidth / 10, fullHeight / 3.2, 0.0, fullWidth / 10),
           child: FittedBox(
             child: Text('NSS  MCET',
-                style: TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 50.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.indigo[900])),
           ),
         ),
         Container(
           padding:
-              EdgeInsets.fromLTRB(fullWidth / 3.3, fullHeight / 20, 0.0, 0.0),
+              EdgeInsets.fromLTRB(fullWidth / 3.3, fullHeight / 10, 0.0, 0.0),
           child: new CircleAvatar(
             backgroundColor: Colors.transparent,
             radius: 50.0,

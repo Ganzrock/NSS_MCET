@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_complete_guide/widgets/user_profile/profile_icon.dart';
 
 import '../services/search_service.dart';
-import 'user_details_screen.dart';
 
 class BloodRequestScreen extends StatefulWidget {
   static const routeName = '/blood-request';
@@ -36,36 +36,30 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final width = mediaQuery.width;
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         title: Text(
           'Blood Donors',
           textAlign: TextAlign.left,
-          style: TextStyle(
-            color: Colors.black87,
-            fontFamily: '',
-            fontWeight: FontWeight.w700,
-            fontSize: 20.0,
-          ),
+          style: theme.textTheme.headline1,
         ),
+        automaticallyImplyLeading: false,
+        actions: [
+          ProfileIcon(width: width),
+        ],
       ),
-      body: Container(
-        margin: EdgeInsets.only(top: 8.0),
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Row(
+      body: SafeArea(
+        child: Container(
+          margin: EdgeInsets.only(top: 8.0),
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   Text('BLOOD GROUP : ',
@@ -114,6 +108,7 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                   ),
                   RaisedButton(
                     visualDensity: VisualDensity.standard,
+                    color: Colors.indigo,
                     onPressed: () async {
                       setState(() {
                         isLoading = true;
@@ -130,75 +125,90 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
                   ),
                 ],
               ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            queryResultSet.length == 0
-                ? _buildCenterText('Search to see the Donors')
-                : builderSet.length == 0
-                    ? _buildCenterText('Couldn\'t reach servers...Try Again')
-                    : Column(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text(
-                              'TOTAL DONORS :  ${builderSet.length}',
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                fontWeight: FontWeight.w500,
+              SizedBox(
+                height: 10.0,
+              ),
+              queryResultSet.length == 0
+                  ? _buildCenterText('Search to see the Donors')
+                  : Expanded(
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(
+                                'TOTAL DONORS :  ${builderSet.length}',
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(_bloodGroup),
+                            ),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                child: ListView.separated(
+                                  separatorBuilder: (ctx, index) {
+                                    return Divider();
+                                  },
+                                  itemBuilder: (ctx, index) {
+                                    var item = builderSet[index];
+                                    return ListTile(
+                                      leading: Icon(
+                                        Icons.perm_identity,
+                                      ),
+                                      title: Text(
+                                        item['username'].toString(),
+                                      ),
+                                      trailing: Text(
+                                        item['bloodGroup'].toString(),
+                                      ),
+                                    );
+                                  },
+                                  itemCount: queryResultSet.length,
+                                ),
                               ),
                             ),
-                            subtitle: Text(_bloodGroup),
-                          ),
-                          Container(
-                            height: mediaQuery.height * 0.68,
-                            width: double.infinity,
-                            child: ListView.separated(
-                              separatorBuilder: (ctx, index) {
-                                return Divider();
-                              },
-                              itemBuilder: (ctx, index) {
-                                var item = builderSet[index];
-                                return ListTile(
-                                  leading: Icon(
-                                    Icons.perm_identity,
-                                  ),
-                                  title: Text(
-                                    item['username'].toString(),
-                                  ),
-                                  trailing: Text(
-                                    item['bloodGroup'].toString(),
-                                  ),
-                                );
-                              },
-                              itemCount: queryResultSet.length,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-          ],
+                    ),
+            ],
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: RaisedButton(
-        onPressed: () {},
-        child: Text('Send Blood Request'),
-        color: Colors.deepOrangeAccent[400],
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: ButtonBar(
+      //   children: <Widget>[
+      //     FlatButton(
+      //       onPressed: () {},
+      //       child: Text('Contact NSS Volunteers'),
+      //       color: Colors.deepOrangeAccent[400],
+      //     ),
+      //     RaisedButton(
+      //       onPressed: () {},
+      //       child: Text('Request Blood'),
+      //       color: Colors.deepOrangeAccent[400],
+      //     ),
+      //   ],
+      // ),
     );
   }
 
   _buildCenterText(String s) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      child: Center(
-        heightFactor: MediaQuery.of(context).size.height,
-        child: Text(
-          s,
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 17.0,
-            fontWeight: FontWeight.w600,
+    return Expanded(
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Center(
+          heightFactor: MediaQuery.of(context).size.height,
+          child: Text(
+            s,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 17.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

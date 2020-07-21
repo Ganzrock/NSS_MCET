@@ -1,10 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import 'package:flutter_complete_guide/widgets/chat/message_bubble.dart';
 
 class Messages extends StatelessWidget {
+  Messages({this.width});
+
+  final double width;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -39,6 +44,8 @@ class Messages extends StatelessWidget {
                   chatDocs[index]['userImage'],
                   chatDocs[index]['userId'] == futureSnapshot.data.uid,
                   key: ValueKey(chatDocs[index].documentID),
+                  width: width,
+                  date: DateTime.parse(chatDocs[index]['createdAt']),
                 ),
               );
             });

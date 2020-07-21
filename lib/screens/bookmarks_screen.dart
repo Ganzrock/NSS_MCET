@@ -1,27 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/articles.dart';
+import 'package:provider/provider.dart';
 
-import 'blood_request_screen.dart';
+import '../widgets/user_profile/post_card.dart';
 
-class EmergencyScreen extends StatelessWidget {
+class BookmarkScreen extends StatelessWidget {
   static const routeName = '/bookmarks';
+  List articles = [];
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(''),
-      ),
-      floatingActionButton: Container(
-        width: MediaQuery.of(context).size.width * 0.1,
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushNamed(BloodRequestScreen.routeName);
-          },
-          child: Image.asset(
-            'assets/images/blood_drop2.png',
-            fit: BoxFit.cover,
+    final theme = Theme.of(context);
+    return Consumer<Articles>(
+      builder: (_, a, child) {
+        articles = a.bookmarkArticles;
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Bookmarks', style: theme.textTheme.headline1),
+            backgroundColor: Colors.white,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.indigo,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-        ),
-      ),
+          body: articles.length == 0
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                  itemCount: articles.length,
+                  itemBuilder: (ctx, index) {
+                    return PostCard(
+                      articles[index].imageUrl,
+                      articles[index].title,
+                      articles[index].author,
+                      articles[index].content,
+                      articles[index].userImage,
+                      articles[index].time,
+                      articles[index].id,
+                      articles[index].views,
+                      articles[index].favorite,
+                      articles[index].bookmarks,
+                      articles[index].isMe,
+                      articles[index].isBookmark,
+                    );
+                  },
+                ),
+        );
+      },
     );
   }
 }

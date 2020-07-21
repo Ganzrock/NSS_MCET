@@ -1,14 +1,17 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_complete_guide/providers/user_details.dart';
+import 'package:flutter_complete_guide/screens/home_screen.dart';
 
 import 'package:flutter_complete_guide/widgets/auth/auth_form.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
+  static const routeName = '/auth';
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
@@ -35,6 +38,7 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _isLoading = true;
       });
+
       if (isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
           email: email,
@@ -67,6 +71,7 @@ class _AuthScreenState extends State<AuthScreen> {
           'noOfPost': noOfPost,
           'isDonor': isDonor ? 'Yes' : 'No',
           'bio': 'Add Bio',
+          'bookmarks': [],
         });
       }
     } on PlatformException catch (err) {
@@ -96,10 +101,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AuthForm(
-        _submitAuthForm,
-        _isLoading,
-      ),
+      body: AuthForm(_submitAuthForm, _isLoading),
     );
   }
 }

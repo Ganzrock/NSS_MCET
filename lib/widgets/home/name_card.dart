@@ -14,7 +14,7 @@ class NameCard extends StatelessWidget {
       ),
       child: Card(
         elevation: 5.0,
-        color: Colors.indigoAccent,
+        color: Colors.indigo[900],
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -23,7 +23,7 @@ class NameCard extends StatelessWidget {
               Text(
                 'Hello,',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.white60,
                   fontWeight: FontWeight.w900,
                   fontSize: 30.0,
                 ),
@@ -31,7 +31,7 @@ class NameCard extends StatelessWidget {
               Text(
                 name,
                 style: TextStyle(
-                  color: Colors.black87,
+                  color: Colors.white70,
                   fontWeight: FontWeight.w900,
                   fontSize: 30.0,
                 ),
@@ -41,7 +41,7 @@ class NameCard extends StatelessWidget {
                 child: Text(
                   'Welcome Back, These are some of our contribution to the community',
                   style: TextStyle(
-                    color: Colors.white54,
+                    color: Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 15.0,
                   ),

@@ -14,7 +14,7 @@ class AchievementCard extends StatelessWidget {
         semanticContainer: true,
         borderOnForeground: true,
         elevation: 3.0,
-        color: Colors.deepOrangeAccent[100],
+        color: Colors.blue[200],
         child: SingleChildScrollView(
           primary: true,
           scrollDirection: Axis.horizontal,
@@ -48,7 +48,7 @@ class AchievementCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w900,
                         fontSize: 22.0,
-                        color: Colors.white70,
+                        color: Colors.white,
                       ),
                     ),
                   ],

@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_complete_guide/providers/articles.dart';
 import 'package:flutter_complete_guide/providers/user_details.dart';
 import 'package:nice_button/NiceButton.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/pickers/article_image_picker.dart';
 
@@ -18,16 +20,14 @@ class NewArticle extends StatefulWidget {
 }
 
 class _NewArticleState extends State<NewArticle> {
-  final _formKey = GlobalKey<FormState>();
   File _articleImageFile;
   var _articleTitle = '';
   var _articleContent = '';
-
+  var isEdit = true;
   var _isLoading = false;
+  var uploaded = false;
 
-  var author = '';
-
-  void _pickedImage(File image) {
+  void _pickedImage(File image) async {
     _articleImageFile = image;
   }
 
@@ -38,90 +38,85 @@ class _NewArticleState extends State<NewArticle> {
   //   );
   // }
 
-  String get userName {
-    User().userData.then((DocumentSnapshot doc) {
-      setState(() {
-        author = doc['username'];
-      });
-    });
-    return author;
-  }
-
   void _submitArticle(
-    String username,
     DateTime date,
     String title,
     String content,
     File image,
     BuildContext ctx,
   ) async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
+    if (title.length <= 100) {
+      try {
+        setState(() {
+          _isLoading = true;
+          isEdit = false;
+        });
+        final author = Provider.of<UserData>(ctx, listen: false).userName;
+        final userImageUrl = Provider.of<UserData>(ctx, listen: false).imageUrl;
+        final uArticleCount =
+            Provider.of<UserData>(ctx, listen: false).noOfPost;
+        await Provider.of<Articles>(context, listen: false).createArticle(
+            author, userImageUrl, title, content, uArticleCount, image);
+        setState(() {
+          uploaded = true;
+        });
+      } on PlatformException catch (err) {
+        var message = 'An error occurred';
 
-      final user = await FirebaseAuth.instance.currentUser();
+        if (err.message != null) {
+          message = err.message;
+        }
 
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('article_image')
-          .child(username)
-          .child(user.uid + '${DateTime.now().toString()}.jgp');
-
-      await ref.putFile(image).onComplete;
-
-      final url = await ref.getDownloadURL();
-
-      await Firestore.instance
-          .collection('users')
-          .document(user.uid)
-          .collection('articles')
-          .document(user.uid + '${date.toString()}')
-          .setData({
-        'author': username,
-        'title': title,
-        'content': content,
-        'image_url': url,
-        'claps': 0,
-        'time': date
-      });
-    } on PlatformException catch (err) {
-      var message = 'An error occurred, pelase check your credentials!';
-
-      if (err.message != null) {
-        message = err.message;
+        Scaffold.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Theme.of(ctx).errorColor,
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+          isEdit = true;
+        });
+      } catch (err) {
+        print(err);
+        setState(() {
+          _isLoading = false;
+          isEdit = true;
+        });
       }
-
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Theme.of(ctx).errorColor,
+    } else {
+      SnackBar(
+        content: Text(
+          'Only 34 characters allowed for title',
+          style: TextStyle(color: Colors.blueGrey),
         ),
+        backgroundColor: Colors.green,
       );
       setState(() {
         _isLoading = false;
-      });
-    } catch (err) {
-      print(err);
-      setState(() {
-        _isLoading = false;
+        isEdit = true;
       });
     }
-
-    Navigator.of(context).pop();
+    Navigator.of(ctx).pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.indigo,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          'Drop Your Article',
+          textAlign: TextAlign.left,
+          style: theme.textTheme.headline1,
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -136,20 +131,12 @@ class _NewArticleState extends State<NewArticle> {
                 child: Center(
                     child: Column(children: [
                   Padding(
-                    padding: EdgeInsets.only(top: 20.0),
-                  ),
-                  Text(
-                    'DROP YOUR ARTICLE!',
-                    style: TextStyle(
-                        color: Colors.indigo[700],
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 40.0),
+                    padding: EdgeInsets.only(top: 10.0),
                   ),
                   ArticleImagePicker(_pickedImage),
-                  Text(userName), SizedBox(height: 30),
+                  SizedBox(
+                    height: 25.0,
+                  ),
                   TextFormField(
                     key: ValueKey('title'),
                     decoration: InputDecoration(
@@ -159,6 +146,7 @@ class _NewArticleState extends State<NewArticle> {
                       ),
                       filled: true,
                       fillColor: Colors.grey[100],
+                      enabled: isEdit,
 
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
@@ -189,7 +177,7 @@ class _NewArticleState extends State<NewArticle> {
                     ),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
                   TextFormField(
                     key: ValueKey('content'),
@@ -200,6 +188,7 @@ class _NewArticleState extends State<NewArticle> {
                     minLines: 15,
                     maxLines: 100,
                     autocorrect: true,
+                    enabled: isEdit,
                     decoration: InputDecoration(
                       hintText: 'Content',
                       hintStyle: TextStyle(
@@ -232,29 +221,76 @@ class _NewArticleState extends State<NewArticle> {
                       _articleContent = value;
                     },
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
                   // FlatButton(
                   //   onPressed: () => _tryValidate(),
                   //   child: Text('Submit'),
                   // ),
-                  NiceButton(
-                    radius: 50,
-                    width: 180,
-                    text: "SUBMIT",
-                    gradientColors: [
-                      Colors.indigo[900],
-                      Colors.indigoAccent[700]
-                    ],
-                    onPressed: () => _submitArticle(
-                      author,
-                      DateTime.now(),
-                      _articleTitle,
-                      _articleContent,
-                      _articleImageFile,
-                      context,
-                    ),
-                    background: null,
-                  )
+                  _isLoading
+                      ? uploaded
+                          ? Column(
+                              children: [
+                                Text(
+                                  'Article is uploaded successfully !',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                SizedBox(height: 20.0),
+                                FlatButton(
+                                  child: Text(
+                                    'New Article',
+                                    style: TextStyle(
+                                        color: Colors.indigo,
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pushReplacementNamed(
+                                        NewArticle.routeName);
+                                  },
+                                ),
+                              ],
+                            )
+                          : CircularProgressIndicator()
+                      : NiceButton(
+                          radius: 50,
+                          width: 180,
+                          text: "SUBMIT",
+                          gradientColors: [
+                            Colors.indigo[900],
+                            Colors.indigoAccent[700]
+                          ],
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                useRootNavigator: false,
+                                useSafeArea: false,
+                                child: SimpleDialog(
+                                  children: [
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(),
+                                          SizedBox(width: 10),
+                                          Text('Submitting... Please Wait')
+                                        ])
+                                  ],
+                                ));
+
+                            _submitArticle(
+                              DateTime.now(),
+                              _articleTitle,
+                              _articleContent,
+                              _articleImageFile,
+                              context,
+                            );
+                          },
+                          background: null,
+                        )
                 ])),
               )),
         ),
