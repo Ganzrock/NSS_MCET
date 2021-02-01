@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/articles.dart';
+import 'package:flutter_complete_guide/providers/user_details.dart';
 import 'package:flutter_complete_guide/screens/user_details_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 
-class PostScreen extends StatelessWidget {
+class PostScreen extends StatefulWidget {
   final String title;
   final String postImageUrl;
   final String content;
@@ -12,6 +13,8 @@ class PostScreen extends StatelessWidget {
   final String authorImageUrl;
   final String dateTime;
   final String id;
+  List<String> likes;
+  bool isFav;
   int views;
   final bool isMe;
   PostScreen({
@@ -24,19 +27,27 @@ class PostScreen extends StatelessWidget {
     this.id,
     this.views,
     this.isMe = false,
+    this.isFav,
+    this.likes,
   });
 
+  @override
+  _PostScreenState createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     final dWidth = MediaQuery.of(context).size.width;
     final theme = Theme.of(context);
-    print(id);
-    Provider.of<Articles>(context, listen: false).updateViews(id, views + 1);
+    print(widget.id);
+    Provider.of<Articles>(context, listen: false)
+        .updateViews(widget.id, widget.views + 1);
     var headerText;
-    if (title.length < 40) {
-      headerText = title;
+    if (widget.title.length < 40) {
+      headerText = widget.title;
     } else {
-      headerText = author + ''' 's Article''';
+      headerText = widget.author + ''' 's Article''';
     }
     return Scaffold(
         appBar: AppBar(
@@ -49,8 +60,9 @@ class PostScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               }),
+          elevation: 0,
           actions: [
-            isMe
+            widget.isMe
                 ? DropdownButton(
                     underline: Container(),
                     icon: Icon(
@@ -97,18 +109,9 @@ class PostScreen extends StatelessWidget {
               child: Column(children: <Widget>[
                 Container(
                   alignment: Alignment.center,
-                  width: dWidth * 0.98,
-                  height: dWidth * 0.75,
-                  child: Image.network(postImageUrl, fit: BoxFit.cover),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                Container(
-                  alignment: Alignment.center,
                   width: dWidth * 0.95,
                   height: dWidth * 0.2,
-                  child: Text(title,
+                  child: Text(widget.title,
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontFamily: 'BebasNeue',
@@ -122,14 +125,42 @@ class PostScreen extends StatelessWidget {
                 ),
                 Container(
                   alignment: Alignment.center,
+                  width: dWidth * 0.98,
+                  height: dWidth * 0.75,
+                  child: Image.network(widget.postImageUrl, fit: BoxFit.cover),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  alignment: Alignment.center,
                   width: dWidth * 0.85,
                   child: Text(
-                    content,
+                    widget.content,
                     style: theme.textTheme.headline3,
                   ),
                 ),
                 SizedBox(
                   height: 20.0,
+                ),
+                IconButton(
+                  icon: widget.isFav
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Icon(Icons.favorite_border, color: Colors.red),
+                  onPressed: () {
+                    final userId =
+                        Provider.of<UserData>(context, listen: false).uId;
+
+                    widget.isFav
+                        ? widget.likes.firstWhere((uid) => uid == userId)
+                        : widget.likes.add(userId);
+                    print(widget.likes);
+                    setState(() {
+                      widget.isFav = !widget.isFav;
+                    });
+                    Provider.of<Articles>(context, listen: false)
+                        .markFavorite(widget.id, widget.likes);
+                  },
                 ),
                 Divider(),
                 Row(
@@ -153,7 +184,7 @@ class PostScreen extends StatelessWidget {
                         ),
                         FittedBox(
                           child: Text(
-                            author,
+                            widget.author,
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.0,
@@ -164,7 +195,7 @@ class PostScreen extends StatelessWidget {
                       ],
                     ),
                     CircleAvatar(
-                      backgroundImage: NetworkImage(authorImageUrl),
+                      backgroundImage: NetworkImage(widget.authorImageUrl),
                       radius: 20.0,
                     ),
                     Column(
@@ -178,7 +209,7 @@ class PostScreen extends StatelessWidget {
                         ),
                         FittedBox(
                           child: Text(
-                            '$dateTime',
+                            '${widget.dateTime}',
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 14.0,

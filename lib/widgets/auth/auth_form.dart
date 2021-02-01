@@ -54,14 +54,14 @@ class _AuthFormState extends State<AuthForm> {
     final isValid = _formKey.currentState.validate();
     FocusScope.of(context).unfocus();
 
-    if (_userImageFile == null && !_isLogin) {
-      Scaffold.of(context).showSnackBar(
-        _showSnackBar(
-          'Please pick an Image',
-        ),
-      );
-      return;
-    }
+    // if (_userImageFile == null && !_isLogin) {
+    //   Scaffold.of(context).showSnackBar(
+    //     _showSnackBar(
+    //       'Please pick an Image',
+    //     ),
+    //   );
+    //   return;
+    // }
     if (_repassword.trim() != _userPassword.trim() && !_isLogin) {
       Scaffold.of(context).showSnackBar(
         _showSnackBar(
@@ -141,20 +141,23 @@ class _AuthFormState extends State<AuthForm> {
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (_isLogin) _buildNssWidget(),
+            _buildNssWidget(),
             Container(
               // padding: EdgeInsets.only(
               //     top: MediaQuery.of(context).size.height /
               //         (_isLogin ? 50 : double.infinity)),
+
               child: Form(
                 key: _formKey,
                 child: Container(
                   padding: EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      if (!_isLogin) UserImagePicker(_pickedImage),
+                      // if (!_isLogin) UserImagePicker(_pickedImage),
                       TextFormField(
                         key: ValueKey('email'),
                         autocorrect: false,
@@ -168,7 +171,7 @@ class _AuthFormState extends State<AuthForm> {
                         },
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                            labelText: 'EMAIL',
+                            labelText: 'COLLEGE MAIL-ID',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
@@ -230,27 +233,29 @@ class _AuthFormState extends State<AuthForm> {
                           },
                         ),
                       if (!_isLogin) _buildSelectBloodGroup(context),
-                      TextFormField(
-                        key: ValueKey('password'),
-                        validator: (value) {
-                          if (value.isEmpty || value.length < 7) {
-                            return 'Password must be at least 7 characters long.';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            labelText: 'PASSWORD',
-                            labelStyle: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.indigo))),
-                        obscureText: true,
-                        onSaved: (value) {
-                          _userPassword = value;
-                        },
-                      ),
+                      if (_isLogin)
+                        TextFormField(
+                          key: ValueKey('password'),
+                          validator: (value) {
+                            if (value.isEmpty || value.length < 7) {
+                              return 'Password must be at least 7 characters long.';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              labelText: 'PASSWORD',
+                              labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.indigo))),
+                          obscureText: true,
+                          onSaved: (value) {
+                            _userPassword = value;
+                          },
+                        ),
                       // if (_isLogin)
                       //   Container(
                       //     alignment: Alignment(1.0, 0.0),
@@ -265,30 +270,31 @@ class _AuthFormState extends State<AuthForm> {
                       //             decoration: TextDecoration.underline),
                       //       ),
                       //     ),
+                      // //   ),
+                      // if (!_isLogin)
+                      //   TextFormField(
+                      //     key: ValueKey('repassword'),
+                      //     validator: (value) {
+                      //       if (value.isEmpty || value.length < 7) {
+                      //         return 'Password must be at least 7 characters long.';
+                      //       }
+                      //       return null;
+                      //     },
+                      //     decoration: InputDecoration(
+                      //         labelText: 'CONFIRM PASSWORD',
+                      //         labelStyle: TextStyle(
+                      //             fontFamily: 'Montserrat',
+                      //             fontWeight: FontWeight.bold,
+                      //             color: Colors.grey),
+                      //         focusedBorder: UnderlineInputBorder(
+                      //             borderSide:
+                      //                 BorderSide(color: Colors.indigo))),
+                      //     obscureText: true,
+                      //     onSaved: (value) {
+                      //       _repassword = value;
+                      //     },
                       //   ),
-                      if (!_isLogin)
-                        TextFormField(
-                          key: ValueKey('repassword'),
-                          validator: (value) {
-                            if (value.isEmpty || value.length < 7) {
-                              return 'Password must be at least 7 characters long.';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                              labelText: 'CONFIRM PASSWORD',
-                              labelStyle: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.indigo))),
-                          obscureText: true,
-                          onSaved: (value) {
-                            _repassword = value;
-                          },
-                        ),
+
                       SizedBox(height: 40),
                       if (widget.isLoading)
                         CircularProgressIndicator(
@@ -331,7 +337,7 @@ class _AuthFormState extends State<AuthForm> {
                                 onTap: _trySubmit,
                                 child: Center(
                                   child: Text(
-                                    'SIGNUP',
+                                    'Request an Account',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -384,7 +390,7 @@ class _AuthFormState extends State<AuthForm> {
                                 });
                               },
                               child: Text(
-                                'Register',
+                                'Request',
                                 style: TextStyle(
                                     color: Colors.indigo,
                                     fontFamily: 'Montserrat',
@@ -427,7 +433,7 @@ class _AuthFormState extends State<AuthForm> {
           child: new CircleAvatar(
             backgroundColor: Colors.transparent,
             radius: 50.0,
-            child: Image.asset('assets/images/nn.png'),
+            child: Image.asset('assets/images/nss.png'),
           ),
         ),
       ],

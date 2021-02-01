@@ -12,6 +12,7 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var prevDate = '';
     return FutureBuilder(
       future: FirebaseAuth.instance.currentUser(),
       builder: (ctx, futureSnapshot) {
@@ -36,18 +37,54 @@ class Messages extends StatelessWidget {
               }
               final chatDocs = chatSnapshot.data.documents;
               return ListView.builder(
-                reverse: true,
-                itemCount: chatDocs.length,
-                itemBuilder: (ctx, index) => MessageBubble(
-                  chatDocs[index]['text'],
-                  chatDocs[index]['username'],
-                  chatDocs[index]['userImage'],
-                  chatDocs[index]['userId'] == futureSnapshot.data.uid,
-                  key: ValueKey(chatDocs[index].documentID),
-                  width: width,
-                  date: DateTime.parse(chatDocs[index]['createdAt']),
-                ),
-              );
+                  reverse: true,
+                  itemCount: chatDocs.length,
+                  itemBuilder: (ctx, index) {
+                    final now = DateTime.now();
+                    var date = DateTime.parse(chatDocs[index]['createdAt']);
+                    var indicator = true;
+                    var indicatorText = DateFormat.MMMMd().format(date);
+                    String d;
+                    dateToString(date) {
+                      if (date.day == now.day && date.month == now.month)
+                        d = DateFormat.Hm().format(date);
+                      else {
+                        d = DateFormat.MMMMd().format(date) +
+                            '  ' +
+                            DateFormat.Hm().format(date);
+                      }
+                    }
+
+                    dateToString(date);
+//Indicating the user for diiferent in time of messages
+
+                    // if (index < chatDocs.length) {
+                    //   var date1 =
+                    //       DateTime.parse(chatDocs[index + 1]['createdAt']);
+                    //   prevDate = dateToString(date1);
+                    //   if (prevDate == date)
+                    //     indicator = true;
+                    //   else
+                    //     indicator = false;
+                    // }
+                    return Column(
+                      children: [
+                        if (index == chatDocs.length - 1) SizedBox(height: 100),
+                        MessageBubble(
+                            chatDocs[index]['text'],
+                            chatDocs[index]['username'],
+                            chatDocs[index]['userImage'],
+                            chatDocs[index]['userId'] ==
+                                futureSnapshot.data.uid,
+                            key: ValueKey(chatDocs[index].documentID),
+                            width: width,
+                            d: d,
+                            indicator: false,
+                            indicatorText: indicatorText),
+                        if (index == 0) SizedBox(height: 100),
+                      ],
+                    );
+                  });
             });
       },
     );

@@ -67,12 +67,6 @@ class _NewArticleState extends State<NewArticle> {
           message = err.message;
         }
 
-        Scaffold.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: Theme.of(ctx).errorColor,
-          ),
-        );
         setState(() {
           _isLoading = false;
           isEdit = true;

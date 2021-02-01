@@ -7,6 +7,8 @@ import 'package:flutter_complete_guide/screens/post_screen.dart';
 import 'package:flutter_complete_guide/providers/articles.dart';
 import 'package:flutter_complete_guide/providers/user_details.dart';
 
+import '../constants.dart';
+
 class PostCard extends StatefulWidget {
   final String articleImageUrl;
   final String articleTitle;
@@ -19,8 +21,10 @@ class PostCard extends StatefulWidget {
   final int views;
   final int favorite;
   List<String> bookmarks;
+  List<String> likes;
   final bool isMe;
   bool isBookmark;
+  bool isFav;
 
   PostCard(
       this.articleImageUrl,
@@ -33,8 +37,10 @@ class PostCard extends StatefulWidget {
       this.views,
       this.favorite,
       this.bookmarks,
+      this.likes,
       this.isMe,
       this.isBookmark,
+      this.isFav,
       {this.key});
 
   @override
@@ -50,7 +56,9 @@ class _PostCardState extends State<PostCard> {
     final width = mediaQuery.size.width;
     final date =
         DateFormat.yMMMMd().format(DateTime.parse(widget.time)).toString();
-    var text = '';
+    var noOfCharacters = widget.content.length;
+    var minRead = (noOfCharacters / 400).round();
+    // final min = int.parse(minRead.toString());Read
     // final cl = widget.content.length;
 
     // var postHeight = 0.0;
@@ -82,15 +90,18 @@ class _PostCardState extends State<PostCard> {
                   title: widget.articleTitle,
                   id: widget.id,
                   views: widget.views,
+                  isFav: widget.isFav,
+                  likes: widget.likes,
                 )));
       },
       child: Container(
         width: width,
-        // height: (height / 2) - postHeight + 45.0,
+        //  height: (height / 2) - postHeight + 45.0,
         child: Card(
-          elevation: 5.0,
+          elevation: 10,
+          // color: kPrimaryColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            borderRadius: BorderRadius.all(Radius.circular(30.0)),
           ),
           margin: EdgeInsets.symmetric(
               vertical: height / (height / 6.0),
@@ -100,14 +111,16 @@ class _PostCardState extends State<PostCard> {
               Container(
                 height: height / 4,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0)),
                   image: DecorationImage(
                       image: NetworkImage(widget.articleImageUrl),
                       fit: BoxFit.cover),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -116,7 +129,8 @@ class _PostCardState extends State<PostCard> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          FittedBox(
+                          Container(
+                            width: width,
                             child: Text(
                               widget.articleTitle,
                               style: TextStyle(
@@ -156,24 +170,24 @@ class _PostCardState extends State<PostCard> {
                         ],
                       ),
                     ),
-                    InkWell(
-                      // onTap: () {
-                      //   Navigator.of(context).pushNamed(ProfilePage.routeName2);
-                      // },
-                      child: Container(
-                        height: height / (height / 40.0),
-                        width: width / (width / 40.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          image: DecorationImage(
-                            image: NetworkImage(widget.userImage),
-                          ),
-                        ),
-                        // child: Image.network(
-                        //   userImage,
-                        //   fit: BoxFit.cover,
-                      ),
-                    ),
+                    // InkWell(
+                    //   // onTap: () {
+                    //   //   Navigator.of(context).pushNamed(ProfilePage.routeName2);
+                    //   // },
+                    //   child: Container(
+                    //     height: height / (height / 40.0),
+                    //     width: width / (width / 40.0),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    //       image: DecorationImage(
+                    //         image: NetworkImage(widget.userImage),
+                    //       ),
+                    //     ),
+                    //     // child: Image.network(
+                    //     //   userImage,
+                    //     //   fit: BoxFit.cover,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -185,6 +199,7 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       Row(
                         children: [
+                          SizedBox(width: 7.0),
                           Text(
                             ' ${widget.views}',
                             style: TextStyle(
@@ -193,8 +208,8 @@ class _PostCardState extends State<PostCard> {
                             ),
                           ),
                           SizedBox(width: 3.0),
-                          Icon(Icons.touch_app, size: 14.0),
-                          SizedBox(width: 7.0),
+                          Icon(Icons.remove_red_eye, size: 14.0),
+                          SizedBox(width: 15.0),
                           Text(
                             ' ${widget.favorite}',
                             style: TextStyle(
@@ -203,9 +218,14 @@ class _PostCardState extends State<PostCard> {
                             ),
                           ),
                           SizedBox(width: 3.0),
-                          Icon(Icons.favorite_border, size: 14.0),
+                          Icon(
+                              widget.isFav
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 14.0),
                         ],
                       ),
+                      if (minRead > 0) Text('$minRead min Read'),
                       ButtonBar(
                         children: [
                           IconButton(

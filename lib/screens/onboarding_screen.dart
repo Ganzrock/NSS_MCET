@@ -79,7 +79,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 CircleAvatar(
                   radius: 25,
                   backgroundColor: Colors.white,
-                  backgroundImage: AssetImage('assets/images/nn.png'),
+                  backgroundImage: AssetImage('assets/images/nss.png'),
                 ),
                 Container(
                   width: 100.0,
@@ -344,25 +344,80 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final height = size.height;
+    final width = size.width;
     return Scaffold(
-      body: LiquidSwipe(
-        pages: pages,
-        enableLoop: false,
-        fullTransitionValue: 900,
-        enableSlideIcon: true,
-        // waveType: WaveType.liquidReveal,
-        positionSlideIcon: 0.9,
-        onPageChangeCallback: (activePageIndex) {
-          widget.page = widget.page + 1;
-          print(activePageIndex.toString() + ' ' + widget.page.toString());
+      body: Stack(
+        children: [
+          LiquidSwipe(
+            pages: pages,
+            enableLoop: false,
+            fullTransitionValue: 600,
+            // enableSlideIcon: true,
 
-          if (activePageIndex < 4 && activePageIndex < widget.page) {
-            widget.page = activePageIndex;
-          }
-          if (widget.page == 5) {
-            Navigator.of(context).pushReplacementNamed(AuthScreen.routeName);
-          }
-        },
+            // waveType: WaveType.liquidReveal,
+            positionSlideIcon: 0.9,
+
+            onPageChangeCallback: (activePageIndex) {
+              print(activePageIndex.toString() + ' ' + widget.page.toString());
+              setState(() {
+                widget.page = widget.page + 1;
+                if (activePageIndex < 4 && activePageIndex < widget.page) {
+                  widget.page = activePageIndex;
+                }
+                // </Widget>if (widget.page == 5) {
+                //   Navigator.of(context)
+                //       .pushReplacementNamed(AuthScreen.routeName);
+                // }
+              });
+
+              setState(() {});
+            },
+            slideIconWidget: InkWell(
+              onTap: () {},
+              child: Text(
+                'Swipe <<  ',
+                style: TextStyle(fontFamily: 'Orbitron'),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: height * 0.03,
+            right: (widget.page < 4) ? width * 0.280 : width * 0.335,
+            child: (widget.page < 4)
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buildDotContainer(widget.page == 1, height, width),
+                      buildDotContainer(widget.page == 2, height, width),
+                      buildDotContainer(widget.page == 3, height, width),
+                      buildDotContainer(widget.page == 4, height, width),
+                    ],
+                  )
+                : MaterialButton(
+                    child: Text('Get Started'),
+                    onPressed: () => Navigator.of(context)
+                        .pushReplacementNamed(AuthScreen.routeName),
+                    color: Colors.white,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDotContainer(bool isSelected, double height, double width) {
+    print(isSelected);
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10.0),
+      width: isSelected ? width / (width / 10) : width / (width / 15),
+      height: isSelected ? height / (height / 10) : height / (height / 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(50.0),
+        ),
+        color: Colors.white,
       ),
     );
   }

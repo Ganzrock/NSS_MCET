@@ -1,7 +1,9 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_complete_guide/providers/articles.dart';
 import 'package:flutter_complete_guide/providers/user_details.dart';
+import 'package:flutter_complete_guide/screens/about_screen.dart';
 import 'package:flutter_complete_guide/screens/gallery.dart';
 import 'package:flutter_complete_guide/screens/onboarding_screen.dart';
 import 'package:flutter_complete_guide/screens/report_a_problem.dart';
@@ -16,7 +18,9 @@ import 'screens/blood_request_screen.dart';
 import 'screens/new_article.dart';
 import 'screens/bookmarks_screen.dart';
 import 'screens/notifications_screen.dart';
+import 'screens/our_team_screen.dart';
 import 'screens/user_details_screen.dart';
+import 'screens/developers_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,18 +38,15 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => UserData(),
         ),
-        ChangeNotifierProxyProvider<UserData, Articles>(
-          create: (_) => Articles(null),
-          update: (ctx, auth, previousState) {
-            return Articles(auth.uId);
-          },
+        ChangeNotifierProvider(
+          create: (_) => Articles(),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'NSS MCET',
         theme: ThemeData(
-          primarySwatch: Colors.indigo,
+          // primarySwatch: Colors.indigo,
           backgroundColor: Color.fromRGBO(14, 78, 80, 6),
           accentColor: Colors.orange,
           accentColorBrightness: Brightness.light,
@@ -79,30 +80,34 @@ class _MyAppState extends State<MyApp> {
         home: StreamBuilder(
             stream: FirebaseAuth.instance.onAuthStateChanged,
             builder: (ctx, userSnapshot) {
-              if (userSnapshot.connectionState == ConnectionState.waiting) {
-                return SplashScreen();
-              } else {
-                if (userSnapshot.hasData) {
-                  return HomeScreen();
-                }
-                return OnBoardingScreen();
+              if (userSnapshot.hasData) {
+                return HomeScreen();
               }
+              return OnBoardingScreen();
             }),
         routes: {
           HomeScreen.routeName: (_) => HomeScreen(),
           NewArticle.routeName: (_) => NewArticle(),
           ArticleScreen.routeName: (_) => ArticleScreen(),
-          BloodRequestScreen.routeName: (_) => BloodRequestScreen(),
-          BookmarkScreen.routeName: (_) => BookmarkScreen(),
+          BloodRequestScreen.routeName: (_) => BloodRequestScreen(false),
+          BloodRequestScreen.routeNameWithBackButton: (_) =>
+              BloodRequestScreen(true),
+          BookmarkScreen.routeName: (_) => BookmarkScreen('bookmarks'),
+          BookmarkScreen.routeName2: (_) => BookmarkScreen('favorites'),
           NotificationScreen.routeName: (_) => NotificationScreen(),
-          ChatScreen.routeName: (_) => ChatScreen(),
+          ChatScreen.routeName: (_) => ChatScreen(false),
+          ChatScreen.routeNameWithBackButton: (_) => ChatScreen(true),
           ProfilePage.routeName: (_) => ProfilePage(true),
-          // ProfilePage.routeName2: (_) => ProfilePage(false),
+          ProfilePage.routeName2: (_) => ProfilePage(false),
           OnBoardingScreen.routeName: (_) => OnBoardingScreen(),
           PostCards.routeName: (_) => PostCards(),
           AuthScreen.routeName: (_) => AuthScreen(),
           ReportProblemScreen.routeName: (_) => ReportProblemScreen(),
-          GalleryScreen.routeName: (_) => GalleryScreen(),
+          GalleryScreen.routeNameWithBackButton: (_) => GalleryScreen(true),
+          GalleryScreen.routeName: (_) => GalleryScreen(false),
+          AboutScreen.routeName: (_) => AboutScreen(),
+          OurTeamScreen.routeName: (_) => OurTeamScreen(),
+          DevelopersScreen.routeName: (_) => DevelopersScreen(),
         },
       ),
     );

@@ -1,0 +1,94 @@
+{
+  "name": "",
+  "css_prefix_text": "",
+  "css_use_suffix": false,
+  "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
+  "glyphs": [
+    {
+      "uid": "aed0642f716d94a3ae9b96686f55a6ab",
+      "css": "eye",
+      "code": 61550,
+      "src": "fontawesome5"
+    },
+    {
+      "uid": "2c0b53280f82068f6bab4e2200025d9f",
+      "css": "chat",
+      "code": 59392,
+      "src": "entypo"
+    },
+    {
+      "uid": "c3e5dafba1739ef33cc574c7484febf7",
+      "css": "quote",
+      "code": 59393,
+      "src": "entypo"
+    },
+    {
+      "uid": "d10920db2e79c997c5e783279291970c",
+      "css": "dot-3",
+      "code": 59394,
+      "src": "entypo"
+    },
+    {
+      "uid": "6a7ed3214c9049148cbdb01825e5efc2",
+      "css": "picture",
+      "code": 59395,
+      "src": "typicons"
+    },
+    {
+      "uid": "96819a35f3d743b4df0ea2e92803eeb5",
+      "css": "picture-outline",
+      "code": 59396,
+      "src": "typicons"
+    },
+    {
+      "uid": "ccf71c505b173c61a2e4e8c8cb907dfa",
+      "css": "chat-alt",
+      "code": 59397,
+      "src": "typicons"
+    },
+    {
+      "uid": "f886d2d6cc8cb1b1117e26819a7bc282",
+      "css": "article-alt",
+      "code": 59398,
+      "src": "iconic"
+    },
+    {
+      "uid": "8fc56819afcd07e2786e34f18d39b71b",
+      "css": "book-open",
+      "code": 59399,
+      "src": "iconic"
+    },
+    {
+      "uid": "a1be363d4de9be39857893d4134f6215",
+      "css": "picture-1",
+      "code": 59400,
+      "src": "elusive"
+    },
+    {
+      "uid": "3a3b33acd5fe66d84ff303baf9d8efa8",
+      "css": "align-left",
+      "code": 59401,
+      "src": "elusive"
+    },
+    {
+      "uid": "e9f1a480968111eab72aacfdce5a3d9f",
+      "css": "trashcan",
+      "code": 62268,
+      "src": "octicons"
+    },
+    {
+      "uid": "e9f1a458968111eab72aacfdce5a3d9f",
+      "css": "book",
+      "code": 62228,
+      "src": "octicons"
+    },
+    {
+      "uid": "00b217d8be2a8db6dc8006da0ef92ea1",
+      "css": "trophy",
+      "code": 60119,
+      "src": "rpgawesome"
+    }
+  ]
+}

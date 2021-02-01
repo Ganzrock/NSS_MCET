@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_complete_guide/widgets/user_profile/profile_icon.dart';
+import 'package:flutter_complete_guide/widgets/constants.dart';
+import 'package:flutter_complete_guide/widgets/custom_appbar.dart';
 
 import '../services/search_service.dart';
 
 class BloodRequestScreen extends StatefulWidget {
   static const routeName = '/blood-request';
-
+  static const routeNameWithBackButton = '/blood-request-with-back-button';
+  final bool backButton;
+  BloodRequestScreen(this.backButton);
   @override
   _BloodRequestScreenState createState() => _BloodRequestScreenState();
 }
@@ -39,143 +42,155 @@ class _BloodRequestScreenState extends State<BloodRequestScreen> {
     final theme = Theme.of(context);
     final width = mediaQuery.width;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        title: Text(
-          'Blood Donors',
-          textAlign: TextAlign.left,
-          style: theme.textTheme.headline1,
-        ),
-        automaticallyImplyLeading: false,
-        actions: [
-          ProfileIcon(width: width),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text('Blood Donors',
+      //       style: TextStyle(
+      //         color: Colors.white,
+      //       )),
+      //   backgroundColor: Colors.indigo,
+      //   leading: IconButton(
+      //     icon: Icon(
+      //       Icons.arrow_back_ios,
+      //       color: Colors.white,
+      //     ),
+      //     onPressed: () => Navigator.of(context).pop(),
+      //   ),
+      // ),
+      backgroundColor: kBackgroundColor.withOpacity(0.12),
       body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.only(top: 8.0),
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Stack(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 8.0),
+              padding: EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('BLOOD GROUP : ',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w700,
-                      )),
-                  DropdownButton<String>(
-                    iconEnabledColor: Colors.indigo,
-                    value: _bloodGroup,
-                    icon: Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 8,
-                    style: TextStyle(color: Colors.indigo),
-                    underline: Container(
-                      height: 1.5,
-                      color: Colors.indigoAccent,
-                    ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _bloodGroup = newValue;
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      SizedBox(height: width / (width / 189)),
+                      Text('BLOOD GROUP : ',
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w700,
+                          )),
+                      DropdownButton<String>(
+                        iconEnabledColor: Colors.indigo,
+                        value: _bloodGroup,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 8,
+                        style: TextStyle(color: Colors.indigo),
+                        underline: Container(
+                          height: 1.5,
+                          color: Colors.indigoAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _bloodGroup = newValue;
 
-                        initiateSearch(_bloodGroup.trim().toUpperCase());
+                            initiateSearch(_bloodGroup.trim().toUpperCase());
 
-                        builderSet = queryResultSet;
-                      });
-                    },
-                    items: <String>[
-                      'O+',
-                      'O-',
-                      'A+',
-                      'A-',
-                      'B+',
-                      'B-',
-                      'AB+',
-                      'AB-'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(
-                    width: 9.0,
-                  ),
-                  RaisedButton(
-                    visualDensity: VisualDensity.standard,
-                    color: Colors.indigo,
-                    onPressed: () async {
-                      setState(() {
-                        isLoading = true;
+                            builderSet = queryResultSet;
+                          });
+                        },
+                        items: <String>[
+                          'O+',
+                          'O-',
+                          'A+',
+                          'A-',
+                          'B+',
+                          'B-',
+                          'AB+',
+                          'AB-'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      SizedBox(
+                        width: 9.0,
+                      ),
+                      RaisedButton(
+                        visualDensity: VisualDensity.standard,
+                        color: Colors.indigo,
+                        onPressed: () async {
+                          setState(() {
+                            isLoading = true;
 
-                        builderSet = queryResultSet;
-                      });
+                            builderSet = queryResultSet;
+                          });
 
-                      await Future.delayed(
-                          const Duration(milliseconds: 300), () {});
-                    },
-                    child: Text(
-                      'Search',
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              queryResultSet.length == 0
-                  ? _buildCenterText('Search to see the Donors')
-                  : Expanded(
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            ListTile(
-                              title: Text(
-                                'TOTAL DONORS :  ${builderSet.length}',
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              subtitle: Text(_bloodGroup),
-                            ),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                child: ListView.separated(
-                                  separatorBuilder: (ctx, index) {
-                                    return Divider();
-                                  },
-                                  itemBuilder: (ctx, index) {
-                                    var item = builderSet[index];
-                                    return ListTile(
-                                      leading: Icon(
-                                        Icons.perm_identity,
-                                      ),
-                                      title: Text(
-                                        item['username'].toString(),
-                                      ),
-                                      trailing: Text(
-                                        item['bloodGroup'].toString(),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: queryResultSet.length,
-                                ),
-                              ),
-                            ),
-                          ],
+                          await Future.delayed(
+                              const Duration(milliseconds: 300), () {});
+                        },
+                        child: Text(
+                          'Search',
                         ),
                       ),
-                    ),
-            ],
-          ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  queryResultSet.length == 0
+                      ? _buildCenterText('Search to see the Donors')
+                      : Expanded(
+                          child: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                ListTile(
+                                  title: Text(
+                                    'TOTAL DONORS :  ${builderSet.length}',
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  subtitle: Text(_bloodGroup),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    width: double.infinity,
+                                    child: ListView.separated(
+                                      separatorBuilder: (ctx, index) {
+                                        return Divider();
+                                      },
+                                      itemBuilder: (ctx, index) {
+                                        var item = builderSet[index];
+                                        return ListTile(
+                                          leading: Icon(
+                                            Icons.perm_identity,
+                                          ),
+                                          title: Text(
+                                            item['username'].toString(),
+                                          ),
+                                          trailing: Text(
+                                            item['bloodGroup'].toString(),
+                                          ),
+                                        );
+                                      },
+                                      itemCount: queryResultSet.length,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            CustomAppBar(
+              title: 'Blood Donors',
+              backButton: widget.backButton,
+              showNotify: !widget.backButton,
+            )
+          ],
         ),
       ),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

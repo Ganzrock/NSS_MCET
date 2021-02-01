@@ -2,6 +2,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+class User {
+  final String userName;
+  final String imageUrl;
+  final int noOfPost;
+  final String isDonor;
+  final String bloodGroup;
+  final String bio;
+  final String rollNumber;
+  final String email;
+  final String uid;
+  User({
+    @required this.userName,
+    @required this.imageUrl,
+    @required this.noOfPost,
+    @required this.bio,
+    @required this.bloodGroup,
+    @required this.email,
+    @required this.isDonor,
+    @required this.uid,
+    @required this.rollNumber,
+  });
+}
+
 class UserData with ChangeNotifier {
   FirebaseUser currentUser;
   DocumentSnapshot user;
@@ -16,17 +39,19 @@ class UserData with ChangeNotifier {
   var _email = '';
   var uid = '';
   List<String> _bookmarks = [];
-  Future<void> get setUser async {
+  User userDetails;
+
+  Future<User> setUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
     uid = currentUser.uid;
     await Firestore.instance
         .collection('users')
-        .document(currentUser.uid)
+        .document(uid)
         .get()
         .then((value) {
       user = value;
     });
-
+    print('set user called');
     _userName = user.data['username'];
     _imageUrl = user.data['image_url'];
     _noOfPost = user.data['noOfPost'];
@@ -37,10 +62,24 @@ class UserData with ChangeNotifier {
     _rollNumber = user.data['rollnumber'];
     final _bookmarksData = user.data['bookmarks'];
 
+    final userDetails = User(
+      userName: _userName,
+      imageUrl: _imageUrl,
+      noOfPost: _noOfPost,
+      isDonor: _isDonor,
+      bloodGroup: _bloodGroup,
+      email: _email,
+      bio: _bio,
+      rollNumber: _rollNumber,
+      uid: uid,
+    );
+
     if (_bookmarksData.isNotEmpty)
       _bookmarksData.forEach((b) => _bookmarks.add(b.toString()));
     notifyListeners();
-    return null;
+
+    print('Set user Complete');
+    return userDetails;
   }
 
   String get imageUrl {
@@ -56,6 +95,12 @@ class UserData with ChangeNotifier {
   int get noOfPost {
     final noofpost = _noOfPost;
     return noofpost;
+  }
+
+  void setDonor(String isDonor) {
+    _isDonor = isDonor;
+    setUser;
+    notifyListeners();
   }
 
   String get rollNumber {
@@ -99,7 +144,7 @@ class UserData with ChangeNotifier {
         .collection('users')
         .document(currentUser.uid)
         .updateData({'isDonor': isDonor == 'Yes' ? 'No' : 'Yes'});
-    await setUser;
+
     return;
   }
 
@@ -119,5 +164,9 @@ class UserData with ChangeNotifier {
     await Firestore.instance.collection('users').document(id).updateData({
       'bookmarks': _bookmarks,
     });
+  }
+
+  bool get hasData {
+    return userDetails == null;
   }
 }
